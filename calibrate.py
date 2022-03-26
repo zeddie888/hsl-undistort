@@ -1,6 +1,6 @@
 """
 Givens:
-  Let dimensions of the pattern be n (pts) x m (pts)
+  Let dimensions of the pattern be n x m
 
 Find 3D coordinates for all of chessboard's corners (assume z = 0)
   [
@@ -12,7 +12,7 @@ Find 3D coordinates for all of chessboard's corners (assume z = 0)
 
 Find the pixel coordinates (u, v) for each board corner for each different image
   Use findChessboardCorners(img, patternSize, flags)
-    cv.findChessboardCorners(img, (m, n), None)
+    cv.findChessboardCorners(img, (n, m), None)
 
   Refine corners with cornerSubPix(img, corners, winSize, zeroZone, criteria)
     Assume (-1, -1) for zeroZone
@@ -23,7 +23,12 @@ Find camera parameters using calibrateCamera()
 
 Save computed parameters in JSON:
   Distortion coefficients: k1, k2, p1, p2, k3 (k for radial, p for tangential distortion)
-  Probably save camera matrix as well
+  Camera matrix:
+    [
+      [ fx  0   cx ]
+      [ 0   fy  cy ]
+      [ 0   0    1 ]
+    ]
 
 """
 
@@ -32,13 +37,15 @@ import glob
 import numpy as np
 import json
 
-TESTING_DIR = "testing/"
+TESTING_DIR = "calibPatterns/"
 WIN_SIZE = (11, 11)
 TERM_CRITERIA = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 print("Input dimensions of pattern")
-n = int(input("Number of rows: "))  # normally use: 6
-m = int(input("Number of columns: "))  # normally use: 7
+# normally use: 7, corresponds to number of points per column
+n = int(input("Number of rows: "))
+# normally use: 6, corresponds to number of points per row
+m = int(input("Number of columns: "))
 
 v = input("View corners? (y/n): ")
 
@@ -46,7 +53,7 @@ imgPoints = []
 allObjPoints = []
 
 objPoints = np.zeros((n*m, 3), np.float32)
-objPoints[:, :2] = np.mgrid[0:m, 0:n].T.reshape(-1, 2)
+objPoints[:, :2] = np.mgrid[0:n, 0:m].T.reshape(-1, 2)
 
 testImgs = glob.glob(TESTING_DIR + '*.jpg')
 imgSize = None
@@ -55,7 +62,7 @@ for count, image in enumerate(testImgs):
     img = cv.imread(image)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    res, corners = cv.findChessboardCorners(gray, (m, n), None)  # no flags
+    res, corners = cv.findChessboardCorners(gray, (n, m), None)  # no flags
     if res:
         imgSize = gray.shape[::-1]
         allObjPoints.append(objPoints)
@@ -64,7 +71,7 @@ for count, image in enumerate(testImgs):
         imgPoints.append(corners)
 
     if v == 'y':
-        cv.drawChessboardCorners(img, (m, n), corners, res)
+        cv.drawChessboardCorners(img, (n, m), corners, res)
         cv.imshow(f"Calibration Test Image {count}", img)
         cv.waitKey(0)
         cv.destroyWindow(f"Calibration Test Image {count}")
