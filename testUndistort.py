@@ -1,3 +1,15 @@
+"""
+Testing script for undistort.py
+
+Performs undistortion on chosen distorted image, then displays resulting image
+
+Note:
+    Resulting image contains flaws, likely due to rounding of corrected pixel coordinates,
+    otherwise cannot index image matrix with non-integers
+
+"""
+
+
 import cv2 as cv
 import json
 import undistort
@@ -20,7 +32,7 @@ res = img.copy()
 for i in range(n):
     for j in range(m):
         # pixel = img[i, j]
-        # (xd, yd) = (j, i): (xd, yd) are COORDINATES
+        # (xd, yd) = (j, i): (xd, yd) are COORDINATES on Cartesian plane*
         u, v = j, i
         x_ans, y_ans = undistort.undistort(
             (u, v), data["distCoeffs"], data["cameraMatrix"], ITERS)

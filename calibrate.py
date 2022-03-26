@@ -1,4 +1,9 @@
 """
+Calibrate camera, i.e. calculate camera parameters (esp. camera matrix, distortion coefficients)
+
+Note:
+  Images must be of the same pattern, taken from the same camera with unchanged focal length
+
 Givens:
   Let dimensions of the pattern be n x m
 
