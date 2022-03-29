@@ -42,10 +42,10 @@ import glob
 import numpy as np
 import json
 
-TESTING_DIR = "calibPatterns/"
 WIN_SIZE = (11, 11)
 TERM_CRITERIA = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
+testingDir = input("Directory for calibration patterns: ")
 print("Input dimensions of pattern")
 # normally use: 7, corresponds to number of points per column
 n = int(input("Number of rows: "))
@@ -60,7 +60,7 @@ allObjPoints = []
 objPoints = np.zeros((n*m, 3), np.float32)
 objPoints[:, :2] = np.mgrid[0:n, 0:m].T.reshape(-1, 2)
 
-testImgs = glob.glob(TESTING_DIR + '*.jpg')
+testImgs = glob.glob(testingDir + '/*.jpg')
 imgSize = None
 
 for count, image in enumerate(testImgs):

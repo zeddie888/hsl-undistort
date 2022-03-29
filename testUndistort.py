@@ -19,6 +19,7 @@ ITERS = 3
 with open("calib.json") as f:
     data = json.load(f)
 
+print("Remember to run calibrate.py first if the camera is different")
 fname = input("Name of image to undistort: ")
 
 # Read an image
